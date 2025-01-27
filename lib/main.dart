@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:workmanager/workmanager.dart';
 import 'screens/home_screen.dart';
 import 'services/notification_service.dart';
 import 'providers/settings_provider.dart';
@@ -7,6 +8,7 @@ import 'providers/settings_provider.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await NotificationService().initialize();
+  await Workmanager().initialize(callbackDispatcher);
   runApp(const MyApp());
 }
 

@@ -11,7 +11,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final List<int> _intervalOptions = [15, 30, 45, 60, 90, 120];
+  final List<int> _intervalOptions = [1, 15, 30, 45, 60, 90, 120];
   final List<String> _soundOptions = ['notification.mp3', 'bell.mp3', 'chime.mp3'];
 
   @override
