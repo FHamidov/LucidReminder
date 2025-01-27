@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:audioplayers/audioplayers.dart';
+import 'dart:async';
 
 class NotificationService {
   static final NotificationService _instance = NotificationService._();
@@ -8,51 +8,25 @@ class NotificationService {
   NotificationService._();
 
   final AudioPlayer _audioPlayer = AudioPlayer();
+  Timer? _notificationTimer;
   
   Future<void> initialize() async {
-    await AwesomeNotifications().initialize(
-      null, // no icon for now
-      [
-        NotificationChannel(
-          channelKey: 'reality_check_channel',
-          channelName: 'Reality Check Notifications',
-          channelDescription: 'Periodic reality check notifications',
-          defaultColor: const Color(0xFF9D50DD),
-          ledColor: const Color(0xFF9D50DD),
-          importance: NotificationImportance.High,
-          playSound: false,
-        )
-      ],
-    );
-
-    await AwesomeNotifications().isNotificationAllowed().then((isAllowed) async {
-      if (!isAllowed) {
-        await AwesomeNotifications().requestPermissionToSendNotifications();
-      }
-    });
+    // No initialization needed for this simplified version
   }
 
   Future<void> scheduleRealityCheck(int intervalMinutes, String soundFile) async {
-    await AwesomeNotifications().cancelAll();
+    _notificationTimer?.cancel();
     
     if (intervalMinutes <= 0) return;
 
-    await AwesomeNotifications().createNotification(
-      content: NotificationContent(
-        id: 0,
-        channelKey: 'reality_check_channel',
-        title: 'Reality Check',
-        body: 'Time to check if you are dreaming!',
-        notificationLayout: NotificationLayout.Default,
-      ),
-    );
-
+    // Play sound immediately
     await playSound(soundFile);
 
-    // Schedule the next check
-    Future.delayed(Duration(minutes: intervalMinutes), () {
-      scheduleRealityCheck(intervalMinutes, soundFile);
-    });
+    // Schedule periodic checks
+    _notificationTimer = Timer.periodic(
+      Duration(minutes: intervalMinutes),
+      (_) => playSound(soundFile),
+    );
   }
 
   Future<void> playSound(String soundFile) async {
@@ -64,7 +38,8 @@ class NotificationService {
   }
 
   Future<void> stopNotifications() async {
-    await AwesomeNotifications().cancelAll();
+    _notificationTimer?.cancel();
+    _notificationTimer = null;
     await _audioPlayer.stop();
   }
 } 
